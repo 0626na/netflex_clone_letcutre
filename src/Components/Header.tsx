@@ -1,14 +1,16 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, useAnimation, useViewportScroll } from "framer-motion";
 import { Link, useRouteMatch } from "react-router-dom";
-const Nav = styled.nav`
+import { useEffect, useState } from "react";
+import { type } from "os";
+import { truncate } from "fs/promises";
+const Nav = styled(motion.nav)`
   width: 100%;
   display: flex;
   justify-content: space-between;
   height: 100px;
   position: fixed;
   top: 0;
-  background-color: black;
 `;
 const Column = styled.div`
   display: flex;
@@ -21,11 +23,24 @@ const Logo = styled(motion.svg)`
   width: 100px;
   height: 100px;
 `;
-const Search = styled.svg`
+const Search = styled(motion.svg)`
   height: 20px;
 `;
 const SearchButton = styled.span`
   color: white;
+  display: flex;
+  align-items: center;
+  position: relative;
+`;
+const SearchInput = styled(motion.input)`
+  transform-origin: right center;
+  position: absolute;
+  left: -150px;
+  background: transparent;
+  border: 1px solid white;
+  padding: 5px;
+  padding-left: 10px;
+  border-radius: 2px;
 `;
 
 const Items = styled.ul`
@@ -67,16 +82,67 @@ const HeaderLink = styled(Link)`
   color: inherit;
 `;
 
+const headerVariant = {
+  scroll: {
+    backgroundColor: "rgba(0,0,0,1)",
+    transition: {
+      duration: 0.2,
+    },
+  },
+  top: {
+    backgroundColor: "rgba(0,0,0,0)",
+    transition: {
+      duration: 0.2,
+    },
+  },
+};
+
 const Header = () => {
   const home = useRouteMatch("/");
   const series = useRouteMatch("/series");
+
+  const [openSearch, setOpen] = useState(false);
+  const inputAnimation = useAnimation();
+  const navAnimation = useAnimation();
+  const { scrollY } = useViewportScroll();
+
+  useEffect(
+    () =>
+      scrollY.onChange(() => {
+        if (scrollY.get() > 0) {
+          navAnimation.start("scroll");
+        } else {
+          navAnimation.start("top");
+        }
+      }),
+    [scrollY, navAnimation]
+  );
+  const open = () => {
+    setOpen((prev) => !prev);
+
+    if (openSearch) {
+      inputAnimation.start({
+        scaleX: 0,
+        type: "linear",
+        transition: { duration: 0.2 },
+      });
+    } else {
+      inputAnimation.start({
+        scaleX: 1,
+        type: "linear",
+        transition: { duration: 0.2 },
+      });
+    }
+  };
+
   return (
-    <Nav>
+    <Nav variants={headerVariant} initial="top" animate={navAnimation}>
       <Column>
         <Logo
           variants={logoVariant}
           initial="normal"
           whileHover="active"
+          animate="normal"
           xmlns="http://www.w3.org/2000/svg"
           width="1024"
           height="276.742"
@@ -103,12 +169,23 @@ const Header = () => {
       <Column>
         <SearchButton>
           <Search
+            onClick={open}
+            animate={{
+              type: "linear",
+              x: openSearch ? -180 : 0,
+              transition: { duration: 0.2 },
+            }}
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
           >
             <path d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z" />
           </Search>
+          <SearchInput
+            initial={{ scaleX: 0 }}
+            animate={inputAnimation}
+            placeholder="title,genre,people"
+          />
         </SearchButton>
       </Column>
     </Nav>
