@@ -29,6 +29,8 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	color:${(props) => props.theme.white.darker};
+	background-color:black;
 }
 ol, ul {
 	list-style: none;
