@@ -8,6 +8,7 @@ import { useHistory, useRouteMatch } from "react-router-dom";
 
 const RootHome = styled.div`
   background-color: black;
+  width: 100%;
   height: 200vh;
 `;
 
@@ -45,7 +46,7 @@ const Row = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 5px;
-  position: absolute;
+  //position: absolute;
   width: 100%;
 `;
 const Box = styled(motion.div)<{ bgpic: string }>`
@@ -76,6 +77,15 @@ const MovieInfo = styled(motion.div)`
   }
 `;
 
+const ClickedMovie = styled(motion.div)`
+  position: absolute;
+  width: 40vw;
+  height: 80vh;
+  right: 0px;
+  left: 0px;
+  margin: 0 auto;
+  background-color: ${(prop) => prop.theme.black.lighter};
+`;
 const rowVariant = {
   hidden: {
     x: window.outerWidth,
@@ -115,6 +125,18 @@ const Overlay = styled(motion.div)`
   top: 0;
   background-color: rgba(0, 0, 0, 0.5);
 `;
+
+const ClickedMovieCover = styled.div`
+  background-size: cover;
+  background-position: center center;
+  width: 100%;
+  height: 300px;
+`;
+
+const ClickedTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+`;
+
 const Home = () => {
   const { data: movies, isLoading } = useQuery<IGetMovieResult>(
     ["movies", "nowPlaying"],
@@ -140,6 +162,9 @@ const Home = () => {
 
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
   const { scrollY } = useViewportScroll();
+  const clickedMovie =
+    bigMovieMatch &&
+    movies?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
   return (
     <>
       <RootHome>
@@ -195,19 +220,26 @@ const Home = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   ></Overlay>
-                  <motion.div
+                  <ClickedMovie
                     layoutId={bigMovieMatch.params.movieId}
-                    style={{
-                      position: "absolute",
-                      width: "40vw",
-                      height: "80vh",
-                      backgroundColor: "red",
-                      top: scrollY.get() + 70,
-                      right: "0px",
-                      left: "0px",
-                      margin: "0 auto",
-                    }}
-                  ></motion.div>
+                    style={{ top: scrollY.get() + 70 }}
+                  >
+                    {clickedMovie && (
+                      <>
+                        <ClickedMovieCover
+                          style={{
+                            backgroundImage: `url(
+                              ${makeImagePath(
+                                clickedMovie.backdrop_path,
+                                "w500"
+                              )}
+                            )`,
+                          }}
+                        />
+                        <h2>{clickedMovie?.title}</h2>
+                      </>
+                    )}
+                  </ClickedMovie>
                 </>
               ) : null}
             </AnimatePresence>

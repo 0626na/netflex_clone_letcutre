@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { motion, useAnimation, useViewportScroll } from "framer-motion";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 const Nav = styled(motion.nav)`
   width: 100%;
@@ -25,7 +26,7 @@ const Logo = styled(motion.svg)`
 const Search = styled(motion.svg)`
   height: 20px;
 `;
-const SearchButton = styled.span`
+const SearchButton = styled.form`
   color: white;
   display: flex;
   align-items: center;
@@ -40,6 +41,7 @@ const SearchInput = styled(motion.input)`
   padding: 5px;
   padding-left: 10px;
   border-radius: 2px;
+  color: ${(props) => props.theme.white.lighter};
 `;
 
 const Items = styled.ul`
@@ -96,15 +98,19 @@ const headerVariant = {
   },
 };
 
+interface IForm {
+  keywords: string;
+}
+
 const Header = () => {
   const home = useRouteMatch("/");
   const series = useRouteMatch("/series");
-
+  const { register, handleSubmit, setValue } = useForm<IForm>();
   const [openSearch, setOpen] = useState(false);
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useViewportScroll();
-
+  const history = useHistory();
   useEffect(
     () =>
       scrollY.onChange(() => {
@@ -133,7 +139,10 @@ const Header = () => {
       });
     }
   };
-
+  const onValid = (data: IForm) => {
+    history.push(`/search?keywords=${data.keywords}`);
+    setValue("keywords", "");
+  };
   return (
     <Nav variants={headerVariant} initial="top" animate={navAnimation}>
       <Column>
@@ -166,7 +175,7 @@ const Header = () => {
         </Items>
       </Column>
       <Column>
-        <SearchButton>
+        <SearchButton onSubmit={handleSubmit(onValid)}>
           <Search
             onClick={open}
             animate={{
@@ -181,6 +190,7 @@ const Header = () => {
             <path d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z" />
           </Search>
           <SearchInput
+            {...register("keywords", { minLength: 2, required: true })}
             initial={{ scaleX: 0 }}
             animate={inputAnimation}
             placeholder="title,genre,people"
@@ -190,5 +200,4 @@ const Header = () => {
     </Nav>
   );
 };
-
 export default Header;
