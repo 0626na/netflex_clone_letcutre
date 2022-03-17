@@ -29,11 +29,29 @@ export interface IMovie {
   vote_count: number;
 }
 
-export const getMovies = async () => {
+export const getMoviesNowPlaying = async () => {
   const movies = await (
     await fetch(
       `${BASE_URL}/3/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1&region=kr`
     )
   ).json();
+  return movies;
+};
+
+export const getMoviesPopular = async () => {
+  const movies = await (
+    await fetch(`${BASE_URL}/3/movie/popular?api_key=${API_KEY}&language=ko-KR&page=1&region=kr
+    `)
+  ).json();
+  return movies;
+};
+
+export const getMoviesToprated = async () => {
+  const movies = await (
+    await fetch(
+      `${BASE_URL}/3/movie/top_rated?api_key=${API_KEY}&language=ko-KR&page=1&region=kr`
+    )
+  ).json();
+
   return movies;
 };

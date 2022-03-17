@@ -11,6 +11,7 @@ const Nav = styled(motion.nav)`
   height: 100px;
   position: fixed;
   top: 0;
+  z-index: 1;
 `;
 const Column = styled.div`
   display: flex;
