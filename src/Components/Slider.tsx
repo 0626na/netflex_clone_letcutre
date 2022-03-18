@@ -1,15 +1,15 @@
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, useViewportScroll } from "framer-motion";
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import { makeImagePath } from "../utiles";
-import {
-  boxVariant,
-  movieInfoVariant,
-  rowLeftVariant,
-} from "./AnimationVariants";
+import { boxVariant, movieInfoVariant, rowVariant } from "./AnimationVariants";
 import {
   Box,
+  ClickedMovie,
+  ClickedMovieCover,
+  ClickedTitle,
   MovieInfo,
+  Overlay,
   Row,
   RowContainer,
   RowTitle,
@@ -47,36 +47,73 @@ export interface IMovie {
 interface ISliderCom {
   movies: IGetMovieResult;
   sliderKey: string;
+  sliderTitle: string;
 }
 
-const SliderComponent = ({ movies, sliderKey }: ISliderCom) => {
+const SliderComponent = ({ movies, sliderKey, sliderTitle }: ISliderCom) => {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const [direction, setDirection] = useState(false);
   const offset = 6;
   const history = useHistory();
   const boxClicked = (movieId: number) => {
+    console.log(movieId + sliderKey);
     history.push(`/movies/${movieId}`);
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const IncreaseIndex = () => {
     if (movies) {
+      setDirection(true);
       if (leaving) return;
       setLeaving(true);
       const totalMovies = movies.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
+      console.log("maxIndex: ", maxIndex);
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+  const DecreaseIndex = () => {
+    if (movies) {
+      setDirection(false);
+      if (leaving) return;
+      setLeaving(true);
+      const totalMovies = movies.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+    }
+  };
+
+  const onClickOverlay = () => {
+    console.log(bigMovieMatch?.params.movieId + sliderKey);
+
+    history.goBack();
+  };
+
+  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
+  const { scrollY } = useViewportScroll();
+  const clickedMovie =
+    bigMovieMatch &&
+    movies?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
+
   return (
     <>
       <Slider>
-        <RowTitle>현재 상영중</RowTitle>
+        <RowTitle>
+          {sliderTitle} {sliderKey}
+        </RowTitle>
         <RowContainer>
-          <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            <button onClick={IncreaseIndex}>left</button>
+          <AnimatePresence
+            initial={false}
+            onExitComplete={toggleLeaving}
+            custom={direction}
+          >
+            <button key="button1" onClick={DecreaseIndex}>
+              left
+            </button>
             <Row
+              custom={direction}
               key={index}
-              variants={rowLeftVariant}
+              variants={rowVariant}
               initial="hidden"
               animate="visible"
               exit="exit"
@@ -85,7 +122,7 @@ const SliderComponent = ({ movies, sliderKey }: ISliderCom) => {
               {movies.results
                 .slice(1)
                 .slice(offset * index, offset * index + offset)
-                .map((movie) => (
+                .map((movie: IMovie) => (
                   <Box
                     layout
                     layoutId={movie.id + sliderKey}
@@ -95,17 +132,58 @@ const SliderComponent = ({ movies, sliderKey }: ISliderCom) => {
                     whileHover="hover"
                     transition={{ type: "tween" }}
                     key={movie.id}
-                    bgpic={makeImagePath(movie.backdrop_path, "w300")}
+                    bgpic={makeImagePath(
+                      movie.backdrop_path || movie.poster_path,
+                      "w300"
+                    )}
                   >
                     <MovieInfo variants={movieInfoVariant}>
-                      <h4>{movie.title}</h4>
+                      <h4>
+                        {movie.title} {sliderKey}
+                      </h4>
                     </MovieInfo>
                   </Box>
                 ))}
             </Row>
+            <button key="button2" onClick={IncreaseIndex}>
+              right
+            </button>
           </AnimatePresence>
         </RowContainer>
       </Slider>
+      <AnimatePresence>
+        {bigMovieMatch ? (
+          <>
+            <Overlay
+              onClick={onClickOverlay}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            ></Overlay>
+
+            <ClickedMovie
+              layoutId={bigMovieMatch.params.movieId + sliderKey}
+              style={{ top: scrollY.get() - 130 }}
+            >
+              {clickedMovie && (
+                <>
+                  <ClickedMovieCover
+                    style={{
+                      backgroundImage: `url(
+                        ${makeImagePath(
+                          clickedMovie.backdrop_path ||
+                            clickedMovie.poster_path,
+                          "w500"
+                        )}
+                          )`,
+                    }}
+                  />
+                  <ClickedTitle>{clickedMovie?.title}</ClickedTitle>
+                </>
+              )}
+            </ClickedMovie>
+          </>
+        ) : null}
+      </AnimatePresence>
     </>
   );
 };

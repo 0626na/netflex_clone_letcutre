@@ -10,15 +10,19 @@ export const rowLeftVariant = {
   },
 };
 
-export const rowRightVariant = {
-  hidden: {
-    x: -window.outerWidth - 5,
+export const rowVariant = {
+  hidden: (direction: boolean) => {
+    return {
+      x: direction ? -window.outerWidth - 5 : window.outerWidth + 5,
+    };
   },
   visible: {
     x: 0,
   },
-  exit: {
-    x: window.outerWidth + 5,
+  exit: (direction: boolean) => {
+    return {
+      x: direction ? window.outerWidth + 5 : -window.outerWidth - 5,
+    };
   },
 };
 

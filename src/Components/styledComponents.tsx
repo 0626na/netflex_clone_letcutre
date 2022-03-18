@@ -99,6 +99,10 @@ export const ClickedMovie = styled(motion.div)`
   background-color: ${(prop) => prop.theme.black.lighter};
 `;
 
+export const ClickedTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+`;
+
 export const Overlay = styled(motion.div)`
   position: fixed;
   width: 100%;
