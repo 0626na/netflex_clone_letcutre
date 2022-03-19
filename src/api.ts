@@ -29,6 +29,15 @@ export interface IMovie {
   vote_count: number;
 }
 
+export interface IGenres {
+  genres: IGenre[];
+}
+
+export interface IGenre {
+  id: number;
+  name: string;
+}
+
 export const getMoviesNowPlaying = async () => {
   const movies = await (
     await fetch(
@@ -54,4 +63,13 @@ export const getMoviesToprated = async () => {
   ).json();
 
   return movies;
+};
+
+export const getGenresObj = async () => {
+  const genres = await (
+    await fetch(
+      `${BASE_URL}/3/genre/movie/list?api_key=${API_KEY}&language=ko-KR`
+    )
+  ).json();
+  return genres;
 };

@@ -8,7 +8,7 @@ const Nav = styled(motion.nav)`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  height: 100px;
+  height: 80px;
   position: fixed;
   top: 0;
   z-index: 1;

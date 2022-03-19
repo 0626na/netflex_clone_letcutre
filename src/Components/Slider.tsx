@@ -1,21 +1,22 @@
-import { AnimatePresence, useViewportScroll } from "framer-motion";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { selectedMovies, sliderKeyInRecoil } from "../atom";
 import { makeImagePath } from "../utiles";
 import { boxVariant, movieInfoVariant, rowVariant } from "./AnimationVariants";
 import {
   Box,
-  ClickedMovie,
-  ClickedMovieCover,
-  ClickedTitle,
   MovieInfo,
-  Overlay,
+  RatingInInfo,
   Row,
   RowContainer,
   RowTitle,
   Slider,
+  TitleInInfo,
 } from "./styledComponents";
-
 export interface IGetMovieResult {
   dates: {
     maximum: string;
@@ -54,10 +55,14 @@ const SliderComponent = ({ movies, sliderKey, sliderTitle }: ISliderCom) => {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [direction, setDirection] = useState(false);
+  const setKey = useSetRecoilState(sliderKeyInRecoil);
+  const setMovies = useSetRecoilState(selectedMovies);
   const offset = 6;
   const history = useHistory();
+
   const boxClicked = (movieId: number) => {
-    console.log(movieId + sliderKey);
+    setKey(sliderKey);
+    setMovies(movies);
     history.push(`/movies/${movieId}`);
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -83,24 +88,10 @@ const SliderComponent = ({ movies, sliderKey, sliderTitle }: ISliderCom) => {
     }
   };
 
-  const onClickOverlay = () => {
-    console.log(bigMovieMatch?.params.movieId + sliderKey);
-
-    history.goBack();
-  };
-
-  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
-  const { scrollY } = useViewportScroll();
-  const clickedMovie =
-    bigMovieMatch &&
-    movies?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
-
   return (
     <>
       <Slider>
-        <RowTitle>
-          {sliderTitle} {sliderKey}
-        </RowTitle>
+        <RowTitle>{sliderTitle}</RowTitle>
         <RowContainer>
           <AnimatePresence
             initial={false}
@@ -138,9 +129,11 @@ const SliderComponent = ({ movies, sliderKey, sliderTitle }: ISliderCom) => {
                     )}
                   >
                     <MovieInfo variants={movieInfoVariant}>
-                      <h4>
-                        {movie.title} {sliderKey}
-                      </h4>
+                      <TitleInInfo>{movie.title}</TitleInInfo>
+                      <RatingInInfo>
+                        <FontAwesomeIcon color="#fffa65" icon={faStar} />{" "}
+                        {movie.vote_average}
+                      </RatingInInfo>
                     </MovieInfo>
                   </Box>
                 ))}
@@ -151,39 +144,6 @@ const SliderComponent = ({ movies, sliderKey, sliderTitle }: ISliderCom) => {
           </AnimatePresence>
         </RowContainer>
       </Slider>
-      <AnimatePresence>
-        {bigMovieMatch ? (
-          <>
-            <Overlay
-              onClick={onClickOverlay}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            ></Overlay>
-
-            <ClickedMovie
-              layoutId={bigMovieMatch.params.movieId + sliderKey}
-              style={{ top: scrollY.get() - 130 }}
-            >
-              {clickedMovie && (
-                <>
-                  <ClickedMovieCover
-                    style={{
-                      backgroundImage: `url(
-                        ${makeImagePath(
-                          clickedMovie.backdrop_path ||
-                            clickedMovie.poster_path,
-                          "w500"
-                        )}
-                          )`,
-                    }}
-                  />
-                  <ClickedTitle>{clickedMovie?.title}</ClickedTitle>
-                </>
-              )}
-            </ClickedMovie>
-          </>
-        ) : null}
-      </AnimatePresence>
     </>
   );
 };

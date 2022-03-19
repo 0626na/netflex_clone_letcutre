@@ -15,6 +15,9 @@ import {
   SliderContainer,
 } from "../Components/styledComponents";
 import SliderComponent from "../Components/Slider";
+import Modal from "../Components/Modal";
+import { selectedMovies, sliderKeyInRecoil } from "../atom";
+import { useRecoilValue } from "recoil";
 
 const Home = () => {
   const { data: nowPlayMovies, isLoading: nowPlayingLoading } =
@@ -23,6 +26,9 @@ const Home = () => {
     useQuery<IGetMovieResult>(["movies", "popular"], getMoviesPopular);
   const { data: TopLatedMovies, isLoading: toplatedLoading } =
     useQuery<IGetMovieResult>(["movies", "topLated"], getMoviesToprated);
+
+  const key = useRecoilValue(sliderKeyInRecoil);
+  const selected = useRecoilValue(selectedMovies);
 
   return (
     <>
@@ -63,6 +69,7 @@ const Home = () => {
                 />
               ) : null}
             </SliderContainer>
+            {selected ? <Modal sliderKey={key} movies={selected} /> : null}
           </>
         )}
       </RootHome>

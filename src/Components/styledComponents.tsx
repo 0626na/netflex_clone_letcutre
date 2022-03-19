@@ -78,15 +78,26 @@ export const Box = styled(motion.div)<{ bgpic: string }>`
 
 export const MovieInfo = styled(motion.div)`
   padding: 10px 0;
-  background-color: ${(props) => props.theme.black.lighter};
+  background-color: rgba(0, 0, 0, 0.4);
   opacity: 0;
   position: absolute;
   width: 100%;
+  height: 100%;
   bottom: 0;
-  h4 {
-    text-align: center;
-    font-size: 18px;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+export const TitleInInfo = styled.span`
+  text-align: center;
+  font-size: 18px;
+`;
+
+export const RatingInInfo = styled.span`
+  text-align: center;
+  font-size: 13px;
 `;
 
 export const ClickedMovie = styled(motion.div)`
@@ -96,11 +107,43 @@ export const ClickedMovie = styled(motion.div)`
   right: 0px;
   left: 0px;
   margin: 0 auto;
-  background-color: ${(prop) => prop.theme.black.lighter};
+  background-color: ${(prop) => prop.theme.black.veryDark};
+  border-radius: 10px;
 `;
 
 export const ClickedTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
+  margin-top: 20px;
+  margin-left: 15px;
+  font-size: 30px;
+`;
+
+export const ClickedRelease = styled.span`
+  color: ${(props) => props.theme.white.lighter};
+  font-size: 15px;
+  margin-left: 5px;
+`;
+
+export const ClickedOverView = styled.p`
+  color: ${(props) => props.theme.white.lighter};
+  width: 70%;
+  font-size: 12px;
+  text-align: justify;
+  margin-left: 15px;
+  margin-top: 10px;
+`;
+
+export const ClickedGenre = styled.span`
+  color: ${(props) => props.theme.white.lighter};
+  font-size: 10px;
+  margin-left: 15px;
+  padding-bottom: 20px;
+`;
+
+export const GenreTag = styled.span`
+  margin: 10px 2px;
+  border-radius: 5px;
+  padding: 2px;
 `;
 
 export const Overlay = styled(motion.div)`
@@ -116,6 +159,7 @@ export const ClickedMovieCover = styled.div`
   background-position: center center;
   width: 100%;
   height: 300px;
+  border-radius: 10px;
 `;
 
 export const RowTitle = styled.h3`
