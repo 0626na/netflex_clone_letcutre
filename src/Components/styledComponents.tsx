@@ -54,9 +54,10 @@ export const Row = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 5px;
-  width: 100%;
+  width: 90%;
   position: absolute;
-  padding-right: 65px;
+  padding-left: 65px;
+  padding-right: 90px;
 `;
 
 export const Box = styled(motion.div)<{ bgpic: string }>`

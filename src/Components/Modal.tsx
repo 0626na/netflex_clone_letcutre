@@ -33,8 +33,7 @@ const Modal = ({ movies, sliderKey }: IModal) => {
   const clickedMovie =
     bigMovieMatch &&
     movies?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
-  console.log(clickedMovie?.id);
-  console.log("장르 ", genres);
+
   const onClickOverlay = () => {
     resetMovies(undefined);
     history.goBack();
