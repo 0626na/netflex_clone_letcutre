@@ -3,16 +3,16 @@ import {
   getMoviesNowPlaying,
   getMoviesPopular,
   getMoviesToprated,
-  IGetMovieResult,
+  IGetVideosResult,
 } from "../api";
 import { makeImagePath } from "../utiles";
 import {
   Banner,
   Loader,
   Overview,
-  RootHome,
   Title,
   SliderContainer,
+  RootContainer,
 } from "../Components/styledComponents";
 import SliderComponent from "../Components/Slider";
 import Modal from "../Components/Modal";
@@ -21,18 +21,18 @@ import { useRecoilValue } from "recoil";
 
 const Home = () => {
   const { data: nowPlayMovies, isLoading: nowPlayingLoading } =
-    useQuery<IGetMovieResult>(["movies", "nowPlaying"], getMoviesNowPlaying);
+    useQuery<IGetVideosResult>(["movies", "nowPlaying"], getMoviesNowPlaying);
   const { data: popularMovies, isLoading: popularLoading } =
-    useQuery<IGetMovieResult>(["movies", "popular"], getMoviesPopular);
+    useQuery<IGetVideosResult>(["movies", "popular"], getMoviesPopular);
   const { data: TopLatedMovies, isLoading: toplatedLoading } =
-    useQuery<IGetMovieResult>(["movies", "topLated"], getMoviesToprated);
+    useQuery<IGetVideosResult>(["movies", "topLated"], getMoviesToprated);
 
   const key = useRecoilValue(sliderKeyInRecoil);
   const selected = useRecoilValue(selectedMovies);
 
   return (
     <>
-      <RootHome>
+      <RootContainer>
         {nowPlayingLoading && popularLoading && toplatedLoading ? (
           <Loader>Loading...</Loader>
         ) : (
@@ -42,7 +42,10 @@ const Home = () => {
                 nowPlayMovies?.results[0].backdrop_path || ""
               )}
             >
-              <Title>{nowPlayMovies?.results[0].title}</Title>
+              <Title>
+                {nowPlayMovies?.results[0].title ||
+                  nowPlayMovies?.results[0].original_title}
+              </Title>
               <Overview>{nowPlayMovies?.results[0].overview}</Overview>
             </Banner>
 
@@ -72,7 +75,7 @@ const Home = () => {
             {selected ? <Modal sliderKey={key} movies={selected} /> : null}
           </>
         )}
-      </RootHome>
+      </RootContainer>
     </>
   );
 };

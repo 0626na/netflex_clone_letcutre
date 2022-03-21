@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Header from "./Components/Header";
 import Home from "./Routes/Home";
 import Search from "./Routes/Search";
-import TV from "./Routes/Tv";
+import Series from "./Routes/Series";
 
 function App() {
   return (
@@ -11,13 +11,13 @@ function App() {
       <Router>
         <Header />
         <Switch>
-          <Route path="/series">
-            <TV />
+          <Route path={["/series", "/series/:videoId"]}>
+            <Series />
           </Route>
           <Route path="/search">
             <Search />
           </Route>
-          <Route path={["/", "/movies/:movieId"]}>
+          <Route path={["/", "/movies/:videoId"]}>
             <Home />
           </Route>
         </Switch>

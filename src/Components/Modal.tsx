@@ -6,7 +6,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { IGenres } from "../api";
 import { movieGenres, selectedMovies } from "../atom";
 import { makeImagePath } from "../utiles";
-import { IGetMovieResult } from "./Slider";
+import { IGetVideosResult } from "../api";
 import {
   ClickedGenre,
   ClickedMovie,
@@ -17,22 +17,26 @@ import {
   GenreTag,
   Overlay,
   RatingInInfo,
+  ClickedMovieHeader,
+  ClickedMovieDetail,
 } from "./styledComponents";
 
 interface IModal {
   sliderKey: string;
-  movies: IGetMovieResult | undefined;
+  movies: IGetVideosResult | undefined;
 }
 
 const Modal = ({ movies, sliderKey }: IModal) => {
-  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
+  const bigMovieMatch = useRouteMatch<{ videoId: string }>("/movies/:videoId");
+  const bigSeriesMatch = useRouteMatch<{ videoId: string }>("/series/:videoId");
   const { scrollY } = useViewportScroll();
   const resetMovies = useSetRecoilState(selectedMovies);
   const genres = useRecoilValue<IGenres>(movieGenres);
   const history = useHistory();
+  const currentMatch = bigMovieMatch || bigSeriesMatch;
   const clickedMovie =
-    bigMovieMatch &&
-    movies?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
+    currentMatch &&
+    movies?.results.find((movie) => movie.id === +currentMatch.params.videoId);
 
   const onClickOverlay = () => {
     resetMovies(undefined);
@@ -41,7 +45,7 @@ const Modal = ({ movies, sliderKey }: IModal) => {
 
   return (
     <AnimatePresence>
-      {bigMovieMatch ? (
+      {currentMatch ? (
         <>
           <Overlay
             onClick={onClickOverlay}
@@ -50,7 +54,7 @@ const Modal = ({ movies, sliderKey }: IModal) => {
           ></Overlay>
 
           <ClickedMovie
-            layoutId={bigMovieMatch.params.movieId + sliderKey}
+            layoutId={currentMatch.params.videoId + sliderKey}
             style={{ top: scrollY.get() + 90 }}
           >
             {clickedMovie && (
@@ -66,27 +70,37 @@ const Modal = ({ movies, sliderKey }: IModal) => {
                           )`,
                   }}
                 />
-                <ClickedTitle>
-                  {clickedMovie?.title}
-                  <ClickedRelease>
-                    {clickedMovie.release_date.split("-")[0]}
-                  </ClickedRelease>
-                  <ClickedGenre>
-                    {clickedMovie.genre_ids.map((genId) => (
-                      <GenreTag>
-                        {genres.genres.find((item) => item.id === genId)?.name}
-                      </GenreTag>
-                    ))}
-                  </ClickedGenre>
-                  <RatingInInfo>
-                    <FontAwesomeIcon
-                      icon={faStar}
-                      color="#fffa65"
-                      style={{ marginLeft: "10px" }}
-                    />{" "}
-                    {clickedMovie.vote_average}
-                  </RatingInInfo>
-                </ClickedTitle>
+                <ClickedMovieHeader>
+                  <ClickedTitle>
+                    {clickedMovie?.title ||
+                      clickedMovie.name ||
+                      clickedMovie.original_name}
+                  </ClickedTitle>
+                  <ClickedMovieDetail>
+                    <ClickedRelease>
+                      {clickedMovie.first_air_date ||
+                        clickedMovie?.release_date.split("-")[0]}
+                    </ClickedRelease>
+                    <RatingInInfo>
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        color="#fffa65"
+                        style={{ marginLeft: "10px" }}
+                      />{" "}
+                      {clickedMovie.vote_average}
+                    </RatingInInfo>
+                    <ClickedGenre>
+                      {clickedMovie.genre_ids.map((genId) => (
+                        <GenreTag>
+                          {
+                            genres.genres.find((item) => item.id === genId)
+                              ?.name
+                          }
+                        </GenreTag>
+                      ))}
+                    </ClickedGenre>
+                  </ClickedMovieDetail>
+                </ClickedMovieHeader>
                 <ClickedOverView>{clickedMovie.overview}</ClickedOverView>
               </>
             )}

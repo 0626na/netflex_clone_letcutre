@@ -3,7 +3,7 @@ import {
   getGenresObj,
   getMoviesNowPlaying,
   IGenres,
-  IGetMovieResult,
+  IGetVideosResult,
 } from "./api";
 
 export const sliderKeyInRecoil = atom({
@@ -11,7 +11,7 @@ export const sliderKeyInRecoil = atom({
   default: "nowPlaying",
 });
 
-export const selectedMovies = atom<IGetMovieResult | undefined>({
+export const selectedMovies = atom<IGetVideosResult | undefined>({
   key: "selectedMovies",
   default: getMoviesNowPlaying(),
 });

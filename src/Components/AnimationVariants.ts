@@ -31,3 +31,14 @@ export const movieInfoVariant = {
     transition: { delay: 0.4, type: "tween", duration: 0.2 },
   },
 };
+
+export const sliderArrowVariant = {
+  normal: {
+    opacity: 0.5,
+    scale: 1,
+  },
+  hover: {
+    opacity: 1,
+    scale: 2,
+  },
+};

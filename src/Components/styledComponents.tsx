@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
-export const RootHome = styled.div`
-  background-color: black;
+export const RootContainer = styled.div`
+  background-color: ${(prop) => prop.theme.black.darker};
   width: 100%;
   height: 200vh;
   z-index: auto;
@@ -48,20 +48,19 @@ export const Slider = styled.div`
   top: -30px;
 `;
 
-export const RowContainer = styled.div``;
-
 export const Row = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 5px;
   width: 90%;
   position: absolute;
-  padding-left: 65px;
+  padding-left: 60px;
   padding-right: 90px;
 `;
 
 export const Box = styled(motion.div)<{ bgpic: string }>`
-  background-image: url(${(props) => props.bgpic});
+  background: url(${(props) => props.bgpic}),
+    url("https://images.assetsdelivery.com/compings_v2/yehorlisnyi/yehorlisnyi2104/yehorlisnyi210400016.jpg");
   background-size: cover;
   background-position: center center;
   height: 200px;
@@ -116,13 +115,13 @@ export const ClickedTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
   margin-top: 20px;
   margin-left: 15px;
-  font-size: 30px;
+  font-size: 25px;
 `;
 
 export const ClickedRelease = styled.span`
   color: ${(props) => props.theme.white.lighter};
   font-size: 15px;
-  margin-left: 5px;
+  margin-left: 15px;
 `;
 
 export const ClickedOverView = styled.p`
@@ -136,15 +135,13 @@ export const ClickedOverView = styled.p`
 
 export const ClickedGenre = styled.span`
   color: ${(props) => props.theme.white.lighter};
-  font-size: 10px;
+  font-size: 11px;
   margin-left: 15px;
-  padding-bottom: 20px;
+  margin-top: 2px;
 `;
 
 export const GenreTag = styled.span`
-  margin: 10px 2px;
-  border-radius: 5px;
-  padding: 2px;
+  margin: auto 2px;
 `;
 
 export const Overlay = styled(motion.div)`
@@ -163,8 +160,18 @@ export const ClickedMovieCover = styled.div`
   border-radius: 10px;
 `;
 
+export const ClickedMovieHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ClickedMovieDetail = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 export const RowTitle = styled.h3`
-  margin-left: 5px;
+  margin-left: 60px;
   margin-bottom: 10px;
   font-size: 25px;
   font-weight: 600;
