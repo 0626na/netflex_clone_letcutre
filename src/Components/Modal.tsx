@@ -3,10 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, useViewportScroll } from "framer-motion";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { IGenres } from "../api";
+import { IGenres, IVideo } from "../api";
 import { movieGenres, selectedMovies } from "../atom";
 import { makeImagePath } from "../utiles";
-import { IGetVideosResult } from "../api";
 import {
   ClickedGenre,
   ClickedMovie,
@@ -23,20 +22,21 @@ import {
 
 interface IModal {
   sliderKey: string;
-  movies: IGetVideosResult | undefined;
+  movies: undefined | IVideo[];
 }
 
 const Modal = ({ movies, sliderKey }: IModal) => {
   const bigMovieMatch = useRouteMatch<{ videoId: string }>("/movies/:videoId");
   const bigSeriesMatch = useRouteMatch<{ videoId: string }>("/series/:videoId");
+  const searchMatch = useRouteMatch<{ videoId: string }>("/search/:videoId");
   const { scrollY } = useViewportScroll();
   const resetMovies = useSetRecoilState(selectedMovies);
   const genres = useRecoilValue<IGenres>(movieGenres);
   const history = useHistory();
-  const currentMatch = bigMovieMatch || bigSeriesMatch;
+  const currentMatch = bigMovieMatch || bigSeriesMatch || searchMatch;
   const clickedMovie =
     currentMatch &&
-    movies?.results.find((movie) => movie.id === +currentMatch.params.videoId);
+    movies?.find((movie) => movie.id === +currentMatch.params.videoId);
 
   const onClickOverlay = () => {
     resetMovies(undefined);
@@ -67,7 +67,7 @@ const Modal = ({ movies, sliderKey }: IModal) => {
                             clickedMovie.poster_path,
                           "w500"
                         )}
-                          )`,
+                          ), url("https://images.assetsdelivery.com/compings_v2/yehorlisnyi/yehorlisnyi2104/yehorlisnyi210400016.jpg")`,
                   }}
                 />
                 <ClickedMovieHeader>
@@ -79,7 +79,9 @@ const Modal = ({ movies, sliderKey }: IModal) => {
                   <ClickedMovieDetail>
                     <ClickedRelease>
                       {clickedMovie.first_air_date ||
-                        clickedMovie?.release_date.split("-")[0]}
+                        (clickedMovie.release_date
+                          ? clickedMovie.release_date.split("-")[0]
+                          : "")}
                     </ClickedRelease>
                     <RatingInInfo>
                       <FontAwesomeIcon

@@ -69,7 +69,10 @@ const Series = () => {
             ) : null}
           </SliderContainer>
           {selectedMovie ? (
-            <Modal movies={selectedMovie} sliderKey={selectedSliderKey} />
+            <Modal
+              movies={selectedMovie.results}
+              sliderKey={selectedSliderKey}
+            />
           ) : null}
         </>
       )}

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 
 export const RootContainer = styled.div`
-  background-color: ${(prop) => prop.theme.black.darker};
+  background-color: ${(prop) => prop.theme.black.veryDark};
   width: 100%;
   height: 200vh;
   z-index: auto;
@@ -21,7 +21,7 @@ export const Banner = styled.div<{ bgPic: string }>`
   flex-direction: column;
   justify-content: center;
   padding: 50px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(20, 20, 20, 1)),
     url(${(prop) => prop.bgPic});
   background-size: cover;
 `;
@@ -175,4 +175,14 @@ export const RowTitle = styled.h3`
   margin-bottom: 10px;
   font-size: 25px;
   font-weight: 600;
+`;
+
+export const SearchResult = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  width: 90%;
+  position: absolute;
+  top: 10%;
+  left: 5%;
 `;

@@ -72,7 +72,9 @@ const Home = () => {
                 />
               ) : null}
             </SliderContainer>
-            {selected ? <Modal sliderKey={key} movies={selected} /> : null}
+            {selected ? (
+              <Modal sliderKey={key} movies={selected.results} />
+            ) : null}
           </>
         )}
       </RootContainer>

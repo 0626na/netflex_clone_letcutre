@@ -31,21 +31,7 @@ export interface IVideo {
   video?: boolean;
   vote_average: number;
   vote_count: number;
-}
-export interface ISeries {
-  backdrop_path: string;
-  first_air_date: string;
-  genre_ids: number[];
-  id: number;
-  name: string;
-  origin_country: string[];
-  original_language: string;
-  original_name: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  vote_average: number;
-  vote_count: number;
+  media_type?: string;
 }
 
 export interface IGenres {
@@ -55,13 +41,6 @@ export interface IGenres {
 export interface IGenre {
   id: number;
   name: string;
-}
-
-export interface ISeriesResult {
-  page: number;
-  results: ISeries[];
-  total_pages: number;
-  total_results: number;
 }
 
 export const getMoviesNowPlaying = async () => {
@@ -125,4 +104,13 @@ export const getSeriesTopRated = async () => {
     `)
   ).json();
   return series;
+};
+
+export const getSearch = async (keywords: string | null) => {
+  const searchResult = await (
+    await fetch(
+      `${BASE_URL}/3/search/multi?api_key=${API_KEY}&language=ko-KR&query=${keywords}&page=1&include_adult=true`
+    )
+  ).json();
+  return searchResult;
 };
